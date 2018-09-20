@@ -84,7 +84,7 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
-                        if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
+                        #if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
                         #export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
                         #export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
