@@ -16,57 +16,57 @@
 
 // list of test ids
 def jobs = [
-  //"web_jsp",
-  //"web_servlet",
-  //"web_web-container",
-  //"web_group-1",
-  //"sqe_smoke_all",
-  //"security_all",
-  //"admin-cli-group-1",
-  //"admin-cli-group-2",
-  //"admin-cli-group-3",
-  //"admin-cli-group-4",
-  //"admin-cli-group-5",
-  //"deployment_all",
-  //"deployment_cluster_all",
-  //"ejb_group_1",
-  //"ejb_group_2",
-  //"ejb_group_3",
-  //"ejb_timer_cluster_all",
-  //"ejb_web_all",
-  //"transaction-ee-1",
-  //"transaction-ee-2",
-  //"transaction-ee-3",
-  //"transaction-ee-4",
-  //"cdi_all",
-  //"ql_gf_full_profile_all",
-  //"ql_gf_nucleus_all",
-  //"ql_gf_web_profile_all",
-  //"ql_gf_embedded_profile_all",
-  //"nucleus_admin_all",
-  //"cts_smoke_group-1",
-  //"cts_smoke_group-2",
-  "cts_smoke_group-3"
-  //"cts_smoke_group-4",
-  //"cts_smoke_group-5",
-  //"servlet_tck_servlet-api-servlet",
-  //"servlet_tck_servlet-api-servlet-http",
-  //"servlet_tck_servlet-compat",
-  //"servlet_tck_servlet-pluggability",
-  //"servlet_tck_servlet-spec",
-  //"findbugs_all",
-  //"findbugs_low_priority_all",
-  //"jdbc_all",
-  //"jms_all",
-  //"copyright",
-  //"batch_all",
-  //"naming_all",
-  //"persistence_all",
-  //"webservice_all",
-  //"connector_group_1",
-  //"connector_group_2",
-  //"connector_group_3",
-  //"connector_group_4"
+  "web_jsp",
+  "web_servlet",
+  "web_web-container",
+  "web_group-1",
+  "sqe_smoke_all",
+  "security_all",
+  "admin-cli-group-1",
+  "admin-cli-group-2",
+  "admin-cli-group-3",
+  "admin-cli-group-4",
+  "admin-cli-group-5",
+  "deployment_all",
+  "deployment_cluster_all",
+  "ejb_group_1",
+  "ejb_group_2",
+  "ejb_group_3",
+  "ejb_timer_cluster_all",
+  "ejb_web_all",
+  "transaction-ee-1",
+  "transaction-ee-2",
+  "transaction-ee-3",
+  "transaction-ee-4",
+  "cdi_all",
+  "ql_gf_full_profile_all",
+  "ql_gf_nucleus_all",
+  "ql_gf_web_profile_all",
+  "ql_gf_embedded_profile_all",
+  "nucleus_admin_all",
+  "cts_smoke_group-1",
+  "cts_smoke_group-2",
+  "cts_smoke_group-3",
+  "cts_smoke_group-4",
+  "cts_smoke_group-5",
+  "servlet_tck_servlet-api-servlet",
+  "servlet_tck_servlet-api-servlet-http",
+  "servlet_tck_servlet-compat",
+  "servlet_tck_servlet-pluggability",
+  "servlet_tck_servlet-spec",
+  "findbugs_all",
+  "findbugs_low_priority_all",
+  "jdbc_all",
+  "jms_all",
+  "copyright",
+  "batch_all",
+  "naming_all",
+  "persistence_all",
+  "webservice_all",
+  "connector_group_1",
+  "connector_group_2",
+  "connector_group_3",
+  "connector_group_4"
 ]
 
 env.label = "glassfish-ci-pod-${UUID.randomUUID().toString()}"
@@ -84,6 +84,9 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
+                        if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
+                        export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
+                        export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
                         ${WORKSPACE}/appserver/tests/gftest.sh run_test ${job}
                       """
@@ -139,16 +142,7 @@ spec:
     S1AS_HOME = "${WORKSPACE}/glassfish5/glassfish"
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
-    ANT_OPTS = "-Xmx1024M \
-                -Dhttp.nonProxyHosts='localhost|127.0.0.1' \
-                -Dhttp.proxyHost=www-proxy-hqdc.us.oracle.com \
-                -Dhttp.proxyPort=80 \
-                -Dhttps.nonProxyHosts='localhost|127.0.0.1' \
-                -Dhttps.proxyHost=www-proxy-hqdc.us.oracle.com \
-                -Dhttps.proxyPort=80"
-    MAVEN_OPTS = "${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
-    CTS_SMOKE_URL = "http://sca00kou:8080/job/gf-cts-promotion/lastStableBuild/artifact"
-    INTERNAL_RELEASE_REPO = "http://gf-maven.us.oracle.com/nexus/content/repositories/gf-internal-release"
+    INTERNAL_ENV = credentials('glassfish-internal-env')
   }
   stages {
     stage('build') {
@@ -160,6 +154,11 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
+            if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
+            export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
+            export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
+            env
+            exit 0
             ${WORKSPACE}/gfbuild.sh build_re_dev
             tar -cz -f - -C /root/.m2/repository org/glassfish | split -b 1m - ${WORKSPACE}/bundles/_maven-repo
           """
