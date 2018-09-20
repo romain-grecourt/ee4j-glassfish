@@ -154,11 +154,12 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
-            if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
-            #export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
-            #export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
             env
             exit 0
+
+            #if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
+            #export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
+            #export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
             ${WORKSPACE}/gfbuild.sh build_re_dev
             tar -cz -f - -C /root/.m2/repository org/glassfish | split -b 1m - ${WORKSPACE}/bundles/_maven-repo
           """
