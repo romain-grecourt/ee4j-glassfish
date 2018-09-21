@@ -84,9 +84,6 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
-                        #if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
-                        #export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
-                        #export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
                         ${WORKSPACE}/appserver/tests/gftest.sh run_test ${job}
                       """
@@ -142,7 +139,6 @@ spec:
     S1AS_HOME = "${WORKSPACE}/glassfish5/glassfish"
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
-    //INTERNAL_ENV = credentials('glassfish-internal-env')
   }
   stages {
     stage('build') {
@@ -157,9 +153,6 @@ spec:
             env
             exit 0
 
-            #if [ ! -z "${INTERNAL_ENV}" ] ; then source ${INTERNAL_ENV} ; fi
-            #export ANT_OPTS="-Xmx1024M ${ANT_OPTS}"
-            #export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
             ${WORKSPACE}/gfbuild.sh build_re_dev
             tar -cz -f - -C /root/.m2/repository org/glassfish | split -b 1m - ${WORKSPACE}/bundles/_maven-repo
           """
