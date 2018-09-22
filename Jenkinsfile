@@ -84,11 +84,6 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
-                        # inject internal environment
-                        SOURCE_SH=`mktemp -t XXXinternal-env`
-                        echo "${GF_INTERNAL_ENV}" | base64 -d > ${SOURCE_SH}
-                        . ${SOURCE_SH}
-
                         # re-create the local repository from archived chunks
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
 
@@ -148,7 +143,8 @@ spec:
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
     // required credential (secret text)
-    // set it to empty if no internal environment variables needed
+    // base64 encoded script to source to inject internal environment
+    // create an empty one if not needed
     GF_INTERNAL_ENV = credentials('gf-internal-env')
   }
   stages {
@@ -161,14 +157,6 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
-            # inject internal environment
-            SOURCE_SH=`mktemp -t XXXinternal-env`
-            echo "!!! ${SOURCE_SH} !!!"
-            echo "${GF_INTERNAL_ENV}" | base64 -d > ${SOURCE_SH}
-            . ${SOURCE_SH}
-            # TODO remove me!
-            env
-
             # do the build!
             ${WORKSPACE}/gfbuild.sh build_re_dev
 

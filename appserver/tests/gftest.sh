@@ -36,5 +36,11 @@ run_test(){
 	fi
 }
 
+# inject internal environment
+if [ ! -z "${GF_INTERNAL_ENV}" ] ; then
+  GF_INTERNAL_ENV_SH=$(mktemp -t XXXinternal-env)
+  echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
+  . ${GF_INTERNAL_ENV_SH}
+fi
+
 "$@"
- 
