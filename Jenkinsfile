@@ -152,6 +152,7 @@ spec:
         container('glassfish-ci') {
           sh """
             set +x
+            cat ${INTERNAL_ENV}
             . ${INTERNAL_ENV}
             set -x
             env
