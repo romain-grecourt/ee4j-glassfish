@@ -85,7 +85,7 @@ def generateStage(job) {
                       unstash 'build-bundles'
                       sh """
                         # inject internal environment
-                        GF_INTERNAL_ENV_SH=$(mktemp -t XXXinternal-env)
+                        GF_INTERNAL_ENV_SH=`mktemp -t XXXinternal-env`
                         echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
                         . ${GF_INTERNAL_ENV_SH}
 
@@ -162,7 +162,7 @@ spec:
         container('glassfish-ci') {
           sh """
             # inject internal environment
-            GF_INTERNAL_ENV_SH=$(mktemp -t XXXinternal-env)
+            GF_INTERNAL_ENV_SH=`mktemp -t XXXinternal-env`
             echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
             . ${GF_INTERNAL_ENV_SH}
             # TODO remove me!
