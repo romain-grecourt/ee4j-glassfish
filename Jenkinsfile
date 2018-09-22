@@ -139,7 +139,7 @@ spec:
     S1AS_HOME = "${WORKSPACE}/glassfish5/glassfish"
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
-    INTERNAL_ENV = credentials('glassfish-internal-env')
+    GF_INTERNAL_ENV = credentials('glassfish-internal-env')
   }
   stages {
     stage('build') {
@@ -151,13 +151,6 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
-            set +x
-            if [ -f "${INTERNAL_ENV}" ] ; then echo "EXISTS!" ; fi
-            cat ${INTERNAL_ENV}
-            . ${INTERNAL_ENV}
-            set -x
-            env
-            exit 0
             ${WORKSPACE}/gfbuild.sh build_re_dev
             tar -cz -f - -C /root/.m2/repository org/glassfish | split -b 1m - ${WORKSPACE}/bundles/_maven-repo
           """
