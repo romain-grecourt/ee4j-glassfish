@@ -153,7 +153,7 @@ spec:
           sh """
             set +x
             echo "${GF_INTERNAL_ENV}" > /tmp/gf-internal-env.sh
-            . "${GF_INTERNAL_ENV}"
+            . /tmp/gf-internal-env.sh
             env
             exit 0
             ${WORKSPACE}/gfbuild.sh build_re_dev
