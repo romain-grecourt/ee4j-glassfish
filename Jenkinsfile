@@ -139,7 +139,7 @@ spec:
     S1AS_HOME = "${WORKSPACE}/glassfish5/glassfish"
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
-    GF_INTERNAL_ENV = credentials('glassfish-internal-env')
+    GF_INTERNAL_ENV = credentials('gf-internal-env')
   }
   stages {
     stage('build') {
@@ -151,7 +151,7 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
-            echo "!!!! ${GF_INTERNAL_ENV} !!!!"
+            set +x
             cat "${GF_INTERNAL_ENV}"
             . "${GF_INTERNAL_ENV}"
             ${WORKSPACE}/gfbuild.sh build_re_dev
