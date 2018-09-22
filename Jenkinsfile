@@ -152,7 +152,7 @@ spec:
         container('glassfish-ci') {
           sh """
             set +x
-            echo "${GF_INTERNAL_ENV}" > /tmp/gf-internal-env.sh
+            echo "${GF_INTERNAL_ENV}" | base64 -d > /tmp/gf-internal-env.sh
             cat /tmp/gf-internal-env.sh
             . /tmp/gf-internal-env.sh
             env
