@@ -85,9 +85,9 @@ def generateStage(job) {
                       unstash 'build-bundles'
                       sh """
                         # inject internal environment
-                        GF_INTERNAL_ENV_SH=`mktemp -t XXXinternal-env`
-                        echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
-                        . ${GF_INTERNAL_ENV_SH}
+                        SOURCE_SH=`mktemp -t XXXinternal-env`
+                        echo "${GF_INTERNAL_ENV}" | base64 -d > ${SOURCE_SH}
+                        . ${SOURCE_SH}
 
                         # re-create the local repository from archived chunks
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
@@ -162,9 +162,10 @@ spec:
         container('glassfish-ci') {
           sh """
             # inject internal environment
-            GF_INTERNAL_ENV_SH=`mktemp -t XXXinternal-env`
-            echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
-            . ${GF_INTERNAL_ENV_SH}
+            SOURCE_SH=`mktemp -t XXXinternal-env`
+            echo "!!! ${SOURCE_SH} !!!"
+            echo "${GF_INTERNAL_ENV}" | base64 -d > ${SOURCE_SH}
+            . ${SOURCE_SH}
             # TODO remove me!
             env
 
