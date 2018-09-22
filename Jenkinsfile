@@ -152,6 +152,7 @@ spec:
         container('glassfish-ci') {
           sh """
             set +x
+            if [ -f "${INTERNAL_ENV}" ] ; then echo "EXISTS!" ; fi
             cat ${INTERNAL_ENV}
             . ${INTERNAL_ENV}
             set -x
