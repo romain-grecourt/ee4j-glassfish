@@ -84,7 +84,15 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
+                        # inject internal environment
+                        GF_INTERNAL_ENV_SH=$(mktemp -t XXXinternal-env)
+                        echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
+                        . ${GF_INTERNAL_ENV_SH}
+
+                        # re-create the local repository from archived chunks
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
+
+                        # run the test!
                         ${WORKSPACE}/appserver/tests/gftest.sh run_test ${job}
                       """
                       archiveArtifacts artifacts: "${job}-results.tar.gz"
@@ -139,7 +147,9 @@ spec:
     S1AS_HOME = "${WORKSPACE}/glassfish5/glassfish"
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
-    GF_INTERNAL_ENV = credentials('gf-internal-env-2')
+    // required credential (secret text)
+    // set it to empty if no internal environment variables needed
+    GF_INTERNAL_ENV = credentials('gf-internal-env')
   }
   stages {
     stage('build') {
@@ -151,13 +161,18 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
-            set +x
-            echo "${GF_INTERNAL_ENV}" | base64 -d > /tmp/gf-internal-env.sh
-            cat /tmp/gf-internal-env.sh
-            . /tmp/gf-internal-env.sh
+            # inject internal environment
+            GF_INTERNAL_ENV_SH=$(mktemp -t XXXinternal-env)
+            echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
+            . ${GF_INTERNAL_ENV_SH}
+            # TODO remove me!
             env
-            exit 0
+
+            # do the build!
             ${WORKSPACE}/gfbuild.sh build_re_dev
+
+            # archive the org/glassfish fragment of the local maven repository
+            # split it in chunks of 1M to reduce stress on jenkins master
             tar -cz -f - -C /root/.m2/repository org/glassfish | split -b 1m - ${WORKSPACE}/bundles/_maven-repo
           """
           archiveArtifacts artifacts: 'bundles/*.zip'

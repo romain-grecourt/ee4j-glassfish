@@ -73,12 +73,6 @@ dev_build(){
 }
 
 build_re_dev(){
-  if [ -f "${GF_INTERNAL_ENV}" ] ; then
-    echo "sourcing internal environment"
-    source ${GF_INTERNAL_ENV}
-  fi
-  env
-  exit 0
   dev_build
   archive_bundles
   merge_junits
