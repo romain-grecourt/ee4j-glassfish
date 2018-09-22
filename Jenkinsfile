@@ -151,7 +151,9 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
+            set +x
             . ${INTERNAL_ENV}
+            set -x
             env
             exit 0
             ${WORKSPACE}/gfbuild.sh build_re_dev
