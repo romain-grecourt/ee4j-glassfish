@@ -137,10 +137,10 @@ spec:
           name: maven-repo-shared-storage
         - mountPath: "/root/.m2/repository/org/glassfish/main"
           name: maven-repo-local-storage
-    resources:
-      limits:
-        memory: "8Gi"
-        cpu: "1.75"
+#    resources:
+#      limits:
+#        memory: "8Gi"
+#        cpu: "1.75"
 """
     }
   }
@@ -149,7 +149,7 @@ spec:
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
     // required credential (secret text)
-    // base64 encoded script to source to inject internal environment
+    // base64 encoded script used to inject internal environment
     // create an empty one if not needed
     GF_INTERNAL_ENV = credentials('gf-internal-env')
   }
