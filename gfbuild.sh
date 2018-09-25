@@ -84,8 +84,6 @@ readonly GF_INTERNAL_ENV_SH=$(mktemp -t XXXgf-internal-env)
 if [ ! -z "${GF_INTERNAL_ENV}" ] ; then
   echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
   . ${GF_INTERNAL_ENV_SH}
-  # TODO remove me
-  env
 fi
 
 "$@"
