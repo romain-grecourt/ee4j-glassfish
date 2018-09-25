@@ -69,6 +69,8 @@ def jobs = [
   "connector_group_4"
 ]
 
+# the label is unique and identifies the pod descriptor and its resulting pods
+# without this, the agent could be using a pod created from a different descriptor
 env.label = "glassfish-ci-pod-${UUID.randomUUID().toString()}"
 
 def parallelStagesMap = jobs.collectEntries {
@@ -122,6 +124,8 @@ metadata:
 spec:
   volumes:
     - name: maven-repo-shared-storage
+      # required PVC
+      # this needs to be setup on the k8s cluster
       persistentVolumeClaim:
        claimName: glassfish-maven-repo-storage
     - name: maven-repo-local-storage
@@ -134,8 +138,12 @@ spec:
     tty: true
     imagePullPolicy: Always
     volumeMounts:
+      # local repository is shared with all pipelines
+      # this is pointing at the PVC
       - mountPath: "/root/.m2/repository"
         name: maven-repo-shared-storage
+      # local repository fragment that is scoped to the pod
+      # i.e this is not shared with all pipelines
       - mountPath: "/root/.m2/repository/org/glassfish/main"
         name: maven-repo-local-storage
     env:
@@ -153,6 +161,7 @@ spec:
     APS_HOME = "${WORKSPACE}/appserver/tests/appserv-tests"
     TEST_RUN_LOG = "${WORKSPACE}/tests-run.log"
     // required credential (secret text)
+    // needs to be manually created on Jenkins
     // base64 encoded script used to inject internal environment
     // create an empty one if not needed
     GF_INTERNAL_ENV = credentials('gf-internal-env')
