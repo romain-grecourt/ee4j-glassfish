@@ -36,13 +36,23 @@ run_test(){
 	fi
 }
 
-# inject internal environment
-readonly GF_INTERNAL_ENV_SH=$(mktemp -t XXXgf-internal-env)
-if [ ! -z "${GF_INTERNAL_ENV}" ] ; then
-  echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
-  . ${GF_INTERNAL_ENV_SH}
-  export ANT_HOME=/usr/share/ant
-  export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
+if [ ! -z "${JENKINS_HOME}" ] ; then
+
+  # inject internal environment
+  readonly GF_INTERNAL_ENV_SH=$(mktemp -t XXXgf-internal-env)
+  if [ ! -z "${GF_INTERNAL_ENV}" ] ; then
+    echo "${GF_INTERNAL_ENV}" | base64 -d > ${GF_INTERNAL_ENV_SH}
+    . ${GF_INTERNAL_ENV_SH}
+    export ANT_HOME=/usr/share/ant
+    export MAVEN_OPTS="${ANT_OPTS} -Dmaven.repo.local=/root/.m2/repository"
+  fi
+
+  apt-get update
+  apt-get install -y apt-utils ant unzip tar wget zip sendmail
+
+  # only needed by some of the tests (cts-smoke*)
+  echo "starting sendmail..."
+  /usr/sbin/sendmail -bd -q1h
 fi
 
 "$@"

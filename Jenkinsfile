@@ -86,13 +86,6 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
-                        apt-get update
-                        apt-get install -y apt-utils ant unzip tar wget zip sendmail
-
-                        # only needed by some of the tests (cts-smoke*)
-                        echo "starting sendmail..."
-                        /usr/sbin/sendmail -bd -q1h
-
                         # re-create the local repository from archived chunks
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
 
