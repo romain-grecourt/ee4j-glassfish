@@ -169,9 +169,6 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
-            apt-get update
-            apt-get install -y tar
-
             # do the build!
             ${WORKSPACE}/gfbuild.sh build_re_dev
 
