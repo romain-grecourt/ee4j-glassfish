@@ -88,7 +88,6 @@ def generateStage(job) {
                       sh """
                         apt-get update
                         apt-get install -y apt-utils ant unzip tar wget zip sendmail
-                        ANT_HOME=/usr/share/ant ; export ANT_HOME
 
                         # only needed by some of the tests (cts-smoke*)
                         echo "starting sendmail..."
