@@ -69,8 +69,8 @@ def jobs = [
   "connector_group_4"
 ]
 
-# the label is unique and identifies the pod descriptor and its resulting pods
-# without this, the agent could be using a pod created from a different descriptor
+// the label is unique and identifies the pod descriptor and its resulting pods
+// without this, the agent could be using a pod created from a different descriptor
 env.label = "glassfish-ci-pod-${UUID.randomUUID().toString()}"
 
 def parallelStagesMap = jobs.collectEntries {
