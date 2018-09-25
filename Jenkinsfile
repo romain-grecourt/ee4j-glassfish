@@ -84,8 +84,15 @@ def generateStage(job) {
                       checkout scm
                       unstash 'build-bundles'
                       sh """
+                        apt-get update
+                        apt-get install -y apt-utils ant unzip tar wget zip sendmail
+
                         # re-create the local repository from archived chunks
                         cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
+
+                        # only needed by some of the tests (cts-smoke*)
+                        echo "starting sendmail..."
+                        /usr/sbin/sendmail -bd -q1h
 
                         # run the test!
                         ${WORKSPACE}/appserver/tests/gftest.sh run_test ${job}
@@ -121,16 +128,19 @@ spec:
       emptyDir: {}
   containers:
   - name: glassfish-ci
-    image: rgrecour/glassfish-ci
+    image: maven:3.5-jdk-8
     args:
     - cat
     tty: true
     imagePullPolicy: Always
     volumeMounts:
-        - mountPath: "/root/.m2/repository"
-          name: maven-repo-shared-storage
-        - mountPath: "/root/.m2/repository/org/glassfish/main"
-          name: maven-repo-local-storage
+      - mountPath: "/root/.m2/repository"
+        name: maven-repo-shared-storage
+      - mountPath: "/root/.m2/repository/org/glassfish/main"
+        name: maven-repo-local-storage
+    env:
+      - name: M2_HOME
+        value: /usr/share/maven
 #    resources:
 #      limits:
 #        memory: "8Gi"
@@ -157,6 +167,9 @@ spec:
       steps {
         container('glassfish-ci') {
           sh """
+            apt-get update
+            apt-get install -y tar
+
             # do the build!
             ${WORKSPACE}/gfbuild.sh build_re_dev
 
