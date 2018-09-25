@@ -88,13 +88,14 @@ def generateStage(job) {
                       sh """
                         apt-get update
                         apt-get install -y apt-utils ant unzip tar wget zip sendmail
-
-                        # re-create the local repository from archived chunks
-                        cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
+                        ANT_HOME=/usr/share/ant ; export ANT_HOME
 
                         # only needed by some of the tests (cts-smoke*)
                         echo "starting sendmail..."
                         /usr/sbin/sendmail -bd -q1h
+
+                        # re-create the local repository from archived chunks
+                        cat ${WORKSPACE}/bundles/_maven-repo* | tar -xvz -f - --overwrite -C /root/.m2/repository
 
                         # run the test!
                         ${WORKSPACE}/appserver/tests/gftest.sh run_test ${job}
