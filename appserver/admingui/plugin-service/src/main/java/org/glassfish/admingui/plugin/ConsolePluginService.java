@@ -35,9 +35,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.sun.enterprise.module.ModulesRegistry;
-import com.sun.enterprise.module.Module;
-
 import org.glassfish.admingui.connector.TOC;
 import org.glassfish.admingui.connector.TOCItem;
 import org.glassfish.admingui.connector.Index;

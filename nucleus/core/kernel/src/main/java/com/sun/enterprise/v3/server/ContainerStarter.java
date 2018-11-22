@@ -36,7 +36,7 @@ import org.glassfish.internal.data.EngineInfo;
 import org.glassfish.server.ServerEnvironmentImpl;
 import org.jvnet.hk2.annotations.Service;
 
-import com.sun.enterprise.module.Module;
+import com.sun.enterprise.module.HK2Module;
 
 /**
  * This class is responsible for starting containers.
@@ -46,9 +46,9 @@ import com.sun.enterprise.module.Module;
 @Service
 public class ContainerStarter {
 
-	@Inject
-	ServiceLocator serviceLocator;
-	
+    @Inject
+    ServiceLocator serviceLocator;
+
     @Inject
     ServiceLocator habitat;
 
@@ -70,7 +70,7 @@ public class ContainerStarter {
         // repositories which would allow access to the container module.
         try {
 
-            Module[] modules = sniffer.setup(null, logger);
+            HK2Module[] modules = sniffer.setup(null, logger);
             logger.logp(Level.FINE, "ContainerStarter", "startContainer", "Sniffer {0} set up following modules: {1}",
                     new Object[]{sniffer, modules != null ? Arrays.toString(modules): ""});
         } catch(FileNotFoundException fnf) {

@@ -16,7 +16,7 @@
 
 package org.glassfish.loader.util;
 
-import com.sun.enterprise.module.Module;
+import com.sun.enterprise.module.HK2Module;
 import com.sun.enterprise.module.ModulesRegistry;
 import com.sun.enterprise.util.io.FileUtils;
 import org.glassfish.api.deployment.DeployCommandParameters;
@@ -35,11 +35,9 @@ import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
 import java.util.*;
@@ -213,7 +211,7 @@ public class ASClassLoaderUtil {
                 final StringBuilder tmpString = new StringBuilder();
                 ModulesRegistry mr = habitat.getService(ModulesRegistry.class);
                 if (mr != null) {
-                    for (Module module : mr.getModules()) {
+                    for (HK2Module module : mr.getModules()) {
                         for (URI uri : module.getModuleDefinition().getLocations()) {
                             tmpString.append(uri.getPath());
                             tmpString.append(File.pathSeparator);

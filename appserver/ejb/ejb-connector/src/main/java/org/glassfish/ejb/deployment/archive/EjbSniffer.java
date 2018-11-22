@@ -17,14 +17,9 @@
 package org.glassfish.ejb.deployment.archive;
 
 import org.glassfish.internal.deployment.GenericSniffer;
-import com.sun.enterprise.module.Module;
-import com.sun.enterprise.module.ModuleDefinition;
-import com.sun.enterprise.module.common_impl.DirectoryBasedRepository;
-import com.sun.enterprise.module.common_impl.AbstractModulesRegistryImpl;
 
 import org.glassfish.api.deployment.archive.ReadableArchive;
 import org.glassfish.api.deployment.archive.ArchiveType;
-
 
 import org.jvnet.hk2.annotations.Service;
 import javax.inject.Inject;
@@ -32,9 +27,6 @@ import javax.enterprise.deploy.shared.ModuleType;
 import javax.inject.Singleton;
 
 import java.io.IOException;
-import java.io.File;
-import java.util.logging.Logger;
-import java.util.Collection;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.annotation.Annotation;
